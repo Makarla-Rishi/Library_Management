@@ -1,0 +1,149 @@
+#include <stdio.h>
+#include <string.h>
+struct Book 
+{
+    int id;
+    char title[50];
+    char author[50];
+    int isIssued;
+};
+void addBook(struct Book books[], int *count);
+void viewBooks(const struct Book books[], int count);
+void searchBook(const struct Book books[], int count);
+void issueBook(struct Book books[], int count);
+void returnBook(struct Book books[], int count);
+int main() 
+{
+    struct Book books[100]; 
+    int count = 0;  
+    int choice;
+    while (1) 
+    {
+        printf("\nLibrary Management System\n");
+        printf("1. Add Book\n");
+        printf("2. View Books\n");
+        printf("3. Search Book\n");
+        printf("4. Issue Book\n");
+        printf("5. Return Book\n");
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        switch (choice) 
+        {
+            case 1:
+                addBook(books, &count);
+                break;
+            case 2:
+                viewBooks(books, count);
+                break;
+            case 3:
+                searchBook(books, count);
+                break;
+            case 4:
+                issueBook(books, count);
+                break;
+            case 5:
+                returnBook(books, count);
+                break;
+            case 6:
+                printf("Exiting...\n");
+                return 0;
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    }
+    return 0;
+}
+void addBook(struct Book books[], int *count) 
+{
+    printf("Enter Book ID: ");
+    scanf("%d", &books[*count].id);
+    getchar(); 
+    printf("Enter Book Title: ");
+    fgets(books[*count].title, sizeof(books[*count].title), stdin);
+    books[*count].title[strcspn(books[*count].title, "\n")] = '\0';
+    printf("Enter Author Name: ");
+    fgets(books[*count].author, sizeof(books[*count].author), stdin);
+    books[*count].author[strcspn(books[*count].author, "\n")] = '\0'; 
+    books[*count].isIssued = 0; 
+    (*count)++;
+    printf("Book added successfully!\n");
+}
+void viewBooks(const struct Book books[], int count)
+{
+    if (count == 0) 
+    {
+        printf("No books available in the library.\n");
+        return;
+    }
+    printf("\nID\tTitle\t\tAuthor\t\tStatus\n");
+    printf("-----------------------------------------------\n");
+    for (int i = 0; i < count; i++) {
+        printf("%d\t%s\t\t%s\t\t%s\n", books[i].id, books[i].title, books[i].author,
+               books[i].isIssued ? "Issued" : "Available");
+    }
+}
+void searchBook(const struct Book books[], int count) 
+{
+    char searchTitle[50];
+    printf("Enter the title of the book to search: ");
+    getchar(); 
+    fgets(searchTitle, sizeof(searchTitle), stdin);
+    searchTitle[strcspn(searchTitle, "\n")] = '\0'; 
+    for (int i = 0; i < count; i++)
+    {
+        if (strcmp(books[i].title, searchTitle) == 0)
+        {
+            printf("\nBook Found:\n");
+            printf("ID: %d\nTitle: %s\nAuthor: %s\nStatus: %s\n", books[i].id, books[i].title,
+                   books[i].author, books[i].isIssued ? "Issued" : "Available");
+            return;
+        }
+    }
+    printf("Book not found.\n");
+}
+void issueBook(struct Book books[], int count)
+{
+    int bookId;
+    printf("Enter the ID of the book to issue: ");
+    scanf("%d", &bookId);
+    for (int i = 0; i < count; i++)
+    {
+        if (books[i].id == bookId)
+        {
+            if (books[i].isIssued) 
+            {
+                printf("Book is already issued.\n");
+            } else 
+            {
+                books[i].isIssued = 1;
+                printf("Book issued successfully!\n");
+            }
+            return;
+        }
+    }
+    printf("Book not found.\n");
+}
+void returnBook(struct Book books[], int count) 
+{
+    int bookId;
+    printf("Enter the ID of the book to return: ");
+    scanf("%d", &bookId);
+    for (int i = 0; i < count; i++)
+    {
+        if (books[i].id == bookId) 
+        {
+            if (books[i].isIssued)
+            {
+                books[i].isIssued = 0;
+                printf("Book returned successfully!\n");
+            } else
+            {
+                printf("Book is not currently issued.\n");
+            }
+            return;
+        }
+    }
+    printf("Book not found.\n");
+}
+
